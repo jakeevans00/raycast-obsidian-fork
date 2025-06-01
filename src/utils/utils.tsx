@@ -124,6 +124,7 @@ export function getObsidianTarget(target: ObsidianTarget) {
     case ObsidianTargetType.DailyNote: {
       return ObsidianTargetType.DailyNote + encodeURIComponent(target.vault.name);
     }
+    // TOOD: Intercept daily note append and append to a specific note based on prefix (parased from text)
     case ObsidianTargetType.DailyNoteAppend: {
       const headingParam = target.heading ? "&heading=" + encodeURIComponent(target.heading) : "";
       return (
