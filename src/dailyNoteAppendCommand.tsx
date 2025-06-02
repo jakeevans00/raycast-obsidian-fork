@@ -42,16 +42,16 @@ export default function DailyNoteAppend(props: { arguments: DailyNoteAppendArgs 
       const vaultToUse = selectedVault || vaultsWithPlugin[0];
       setIsAppending(true);
 
-      const target = getObsidianTarget({
+      const targets = getObsidianTarget({
         type: ObsidianTargetType.DailyNoteAppend,
         vault: vaultToUse,
         text: content,
         heading: heading,
         prepend: prepend,
         silent: silent,
-      });
+      }) as string[];
 
-      open(target);
+      targets.forEach((t) => open(t));
       clearCache();
       popToRoot();
       closeMainWindow();

@@ -5,7 +5,7 @@ import { Media } from "./interfaces";
 import { Vault } from "../api/vault/vault.types";
 import { Note } from "../api/vault/notes/notes.types";
 import { getSelectedText } from "@raycast/api";
-
+import { JOURNAL_PATH, prefixMap } from "./prefix";
 export function sortByAlphabet(a: string, b: string) {
   const aTitle = a;
   const bTitle = b;
@@ -124,19 +124,36 @@ export function getObsidianTarget(target: ObsidianTarget) {
     case ObsidianTargetType.DailyNote: {
       return ObsidianTargetType.DailyNote + encodeURIComponent(target.vault.name);
     }
-    // TOOD: Intercept daily note append and append to a specific note based on prefix (parased from text)
     case ObsidianTargetType.DailyNoteAppend: {
       const headingParam = target.heading ? "&heading=" + encodeURIComponent(target.heading) : "";
-      return (
-        ObsidianTargetType.DailyNoteAppend +
+      const obsidianAppendUris =
+        [ObsidianTargetType.DailyNoteAppend +
         (target.prepend ? "&mode=prepend" : "&mode=append") +
         "&data=" +
         encodeURIComponent(target.text) +
         "&vault=" +
         encodeURIComponent(target.vault.name) +
         headingParam +
-        (target.silent ? "&openmode=silent" : "")
-      );
+        (target.silent ? "&openmode=silent" : "")]
+
+      const prefixDelimiter = ": ";
+      for (const [prefix, { path, markdownPrefix }] of Object.entries(prefixMap)) {
+        if (target.text.startsWith(prefix)) {
+          const lineWithoutPrefix = markdownPrefix + target.text.substring(prefix.length + prefixDelimiter.length).trim();
+          obsidianAppendUris.push(
+            ObsidianTargetType.AppendTask +
+            encodeURIComponent(JOURNAL_PATH + path) +
+            "&data=" +
+            encodeURIComponent(lineWithoutPrefix) +
+            "&vault=" +
+            encodeURIComponent(target.vault.name) +
+            headingParam +
+            (target.silent ? "&openmode=silent" : ""));
+            console.info("appending to " + JOURNAL_PATH + path + " with " + lineWithoutPrefix + " 🎉");
+          break;
+        }
+      }
+      return obsidianAppendUris;
     }
     case ObsidianTargetType.NewNote: {
       return (
