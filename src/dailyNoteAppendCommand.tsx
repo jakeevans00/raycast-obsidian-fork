@@ -49,9 +49,9 @@ export default function DailyNoteAppend(props: { arguments: DailyNoteAppendArgs 
         heading: heading,
         prepend: prepend,
         silent: silent,
-      }) as string[];
+      });
 
-      targets.forEach((t) => open(t));
+      targets.split("~").forEach((t) => open(t));
       clearCache();
       popToRoot();
       closeMainWindow();

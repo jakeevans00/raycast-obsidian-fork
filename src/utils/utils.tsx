@@ -113,7 +113,7 @@ export type ObsidianTarget =
       silent?: boolean;
     };
 
-export function getObsidianTarget(target: ObsidianTarget) {
+export function getObsidianTarget(target: ObsidianTarget): string {
   switch (target.type) {
     case ObsidianTargetType.OpenVault: {
       return ObsidianTargetType.OpenVault + encodeURIComponent(target.vault.name);
@@ -153,7 +153,7 @@ export function getObsidianTarget(target: ObsidianTarget) {
           break;
         }
       }
-      return obsidianAppendUris;
+      return obsidianAppendUris.join("~");
     }
     case ObsidianTargetType.NewNote: {
       return (
